@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Resume Analyzer - Get Professional Feedback & Improvements</title>
+    <meta name="description" content="Upload your resume and get instant AI-powered feedback, ATS score, and improvement suggestions to land your dream job.">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-content">
+                <div class="logo">
+                    <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+                        <rect width="32" height="32" rx="8" fill="url(#gradient1)"/>
+                        <path d="M10 12h12M10 16h12M10 20h8" stroke="white" stroke-width="2" stroke-linecap="round"/>
+                        <defs>
+                            <linearGradient id="gradient1" x1="0" y1="0" x2="32" y2="32">
+                                <stop offset="0%" stop-color="#6366f1"/>
+                                <stop offset="100%" stop-color="#8b5cf6"/>
+                            </linearGradient>
+                        </defs>
+                    </svg>
+                    <span>AI Resume Analyzer</span>
+                </div>
+                <div class="nav-links">
+                    <a href="#home" class="nav-link active">Home</a>
+                    <a href="#history" class="nav-link">History</a>
+                    <a href="#about" class="nav-link">About</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h1 class="hero-title">
+                    Transform Your Resume with
+                    <span class="gradient-text">AI-Powered Insights</span>
+                </h1>
+                <p class="hero-subtitle">
+                    Get instant feedback, ATS score, and professional improvement suggestions to land your dream job
+                </p>
+                <div class="upload-section">
+                    <div class="upload-card">
+                        <div class="upload-icon">
+                            <svg width="64" height="64" viewBox="0 0 64 64" fill="none">
+                                <circle cx="32" cy="32" r="32" fill="#f0f4ff"/>
+                                <path d="M32 20v24M20 32h24" stroke="#6366f1" stroke-width="3" stroke-linecap="round"/>
+                                <path d="M26 26l6-6 6 6" stroke="#6366f1" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+                        <h3>Upload Your Resume</h3>
+                        <p>Supports PDF, DOC, DOCX, and TXT files (Max 5MB)</p>
+                        <input type="file" id="resumeFile" accept=".pdf,.doc,.docx,.txt" hidden>
+                        <button class="btn btn-primary" onclick="document.getElementById('resumeFile').click()">
+                            Choose File
+                        </button>
+                        <div id="fileName" class="file-name"></div>
+                        <button id="analyzeBtn" class="btn btn-secondary" style="display: none;">
+                            Analyze Resume
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="loading-spinner">
+            <div class="spinner"></div>
+            <p>Analyzing your resume...</p>
+        </div>
+    </div>
+
+    <!-- Results Section -->
+    <section id="results" class="results-section" style="display: none;">
+        <div class="container">
+            <div class="results-header">
+                <h2>Analysis Results</h2>
+                <button class="btn btn-outline" onclick="resetAnalysis()">Analyze Another</button>
+            </div>
+
+            <!-- Score Card -->
+            <div class="score-card">
+                <div class="score-circle">
+                    <svg width="200" height="200" viewBox="0 0 200 200">
+                        <circle cx="100" cy="100" r="90" fill="none" stroke="#e5e7eb" stroke-width="12"/>
+                        <circle id="scoreCircle" cx="100" cy="100" r="90" fill="none" stroke="url(#scoreGradient)" 
+                                stroke-width="12" stroke-linecap="round" 
+                                stroke-dasharray="565.48" stroke-dashoffset="565.48"
+                                transform="rotate(-90 100 100)"/>
+                        <defs>
+                            <linearGradient id="scoreGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stop-color="#6366f1"/>
+                                <stop offset="100%" stop-color="#8b5cf6"/>
+                            </linearGradient>
+                        </defs>
+                    </svg>
+                    <div class="score-text">
+                        <span id="scoreValue" class="score-value">0</span>
+                        <span class="score-label">ATS Score</span>
+                    </div>
+                </div>
+                <div class="score-info">
+                    <h3 id="overallFeedback">Overall Feedback</h3>
+                    <div class="metrics-grid">
+                        <div class="metric">
+                            <span class="metric-label">Word Count</span>
+                            <span id="wordCount" class="metric-value">0</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">Sections Found</span>
+                            <span id="sectionsFound" class="metric-value">0/7</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">Keywords</span>
+                            <span id="keywordsFound" class="metric-value">0</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">Achievements</span>
+                            <span id="achievementsFound" class="metric-value">0</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sections Analysis -->
+            <div class="analysis-grid">
+                <div class="analysis-card">
+                    <h3>
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                            <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        Strengths
+                    </h3>
+                    <ul id="strengthsList" class="feedback-list strengths-list"></ul>
+                </div>
+
+                <div class="analysis-card">
+                    <h3>
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                            <path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" stroke="#f59e0b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        Issues to Fix
+                    </h3>
+                    <ul id="issuesList" class="feedback-list issues-list"></ul>
+                </div>
+            </div>
+
+            <!-- Recommendations -->
+            <div class="recommendations-section">
+                <h3>AI Recommendations</h3>
+                <div id="recommendationsList" class="recommendations-grid"></div>
+            </div>
+
+            <!-- Section Feedback -->
+            <div class="section-feedback">
+                <h3>Section-by-Section Feedback</h3>
+                <div id="sectionFeedback" class="sections-grid"></div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="action-buttons">
+                <button id="improveBtn" class="btn btn-primary btn-large">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+                        <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"/>
+                    </svg>
+                    Generate Improved Resume
+                </button>
+                <button id="downloadBtn" class="btn btn-outline btn-large">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                    </svg>
+                    Download Report
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Improved Resume Modal -->
+    <div id="improvedModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Your Improved Resume</h2>
+                <button class="close-btn" onclick="closeImprovedModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="improvedResume" class="improved-resume"></div>
+                <div class="changes-list">
+                    <h3>Changes Made:</h3>
+                    <ul id="changesList"></ul>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" onclick="downloadImprovedResume()">Download Improved Resume</button>
+                <button class="btn btn-outline" onclick="closeImprovedModal()">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- History Section -->
+    <section id="history" class="history-section">
+        <div class="container">
+            <h2>Resume History</h2>
+            <div id="historyList" class="history-grid"></div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="about-section">
+        <div class="container">
+            <h2>About AI Resume Analyzer</h2>
+            <div class="about-content">
+                <div class="feature-card">
+                    <div class="feature-icon">🎯</div>
+                    <h3>ATS Optimization</h3>
+                    <p>Ensure your resume passes Applicant Tracking Systems with our advanced analysis</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🤖</div>
+                    <h3>AI-Powered Feedback</h3>
+                    <p>Get intelligent suggestions based on industry best practices and hiring trends</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📊</div>
+                    <h3>Detailed Analytics</h3>
+                    <p>Comprehensive scoring and metrics to understand your resume's strengths and weaknesses</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">✨</div>
+                    <h3>Instant Improvements</h3>
+                    <p>Generate an optimized version of your resume with one click</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2026 AI Resume Analyzer. Built with ❤️ to help you land your dream job.</p>
+        </div>
+    </footer>
+
+    <script src="js/app.js"></script>
+</body>
+</html>
